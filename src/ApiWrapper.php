@@ -263,7 +263,7 @@ class ApiWrapper
 
         $request = $this->httpClient->doRequest($uri);
 
-        return json_encode($request);
+        return $request;
     }
 
 
