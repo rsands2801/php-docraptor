@@ -24,6 +24,7 @@ class ApiWrapper
     protected $api_key;
     protected $url_protocol             = 'https';
     protected $api_url                  = 'docraptor.com/docs';
+    protected $api_url_status            = 'docraptor.com/status';
     protected $async                    = false;
     protected $callback_url;
 
@@ -245,12 +246,49 @@ class ApiWrapper
 
 
     /**
+     * API call to check status of ID
+     *
+     * @param bool|string $status_id
+     * @return bool|mixed
+     * @throws InvalidArgumentException
+     * @throws UnexpectedValueException
+     */
+    public function checkStatus($status_id = false)
+    {
+        $this->async = true;
+
+        if(!$status_id) {
+            throw new InvalidArgumentException('Status ID Required');
+        }
+
+        $uri = sprintf('%s://%s/%s', $this->url_protocol, $this->api_url_status, $status_id);
+
+        $request = $this->httpClient->doGet($uri);
+
+        $response = json_decode($request);
+
+        switch ($response->status) {
+                case "completed":
+                    return "completed";
+                case "failed":
+                    throw new InvalidArgumentException($response->validation_errors);
+                case "queued":
+                    return "queued";
+                case "working":
+                    return "working";
+                default:
+                    throw new UnexpectedValueException($response->status);
+        }
+
+    }
+
+
+    /**
      * Main method that makes the actual API call
      *
      * @param bool|string $callback
      * @return bool|mixed
-     * @throws MissingAPIKeyException
-     * @throws MissingContentException
+     * @throws InvalidArgumentException
      */
     public function requestDocumentAsync($callback = false)
     {
