@@ -2,7 +2,6 @@
 
 interface HttpTransferInterface
 {
-    public function doPost($uri, array $postFields);
+    public function doRequest($uri, $postFields = null);
     
-    public function doGet($uri);
 }
