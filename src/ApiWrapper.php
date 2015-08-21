@@ -248,20 +248,10 @@ class ApiWrapper
      * Main method that makes the actual API call
      *
      * @param bool|string $callback
-     * @return bool|mixed
-     * @throws MissingAPIKeyException
-     * @throws MissingContentException
+     * @return string
      */
     public function requestDocumentAsync($callback = false)
     {
-        if (!$this->api_key) {
-            throw new MissingAPIKeyException();
-        }
-
-        if (!isset($this->document_content) && !isset($this->document_url)) {
-            throw new MissingContentException();
-        }
-
         $this->async(true);
 
         if($callback) {
@@ -271,7 +261,7 @@ class ApiWrapper
         $request = $this->fetchDocument();
 
         $resonse = json_decode($request);
-
+        
         return $response->status_id;
     }
 
