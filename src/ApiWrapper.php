@@ -260,7 +260,7 @@ class ApiWrapper
 
         $request = $this->fetchDocument();
 
-        $resonse = json_decode($request);
+        $response = json_decode($request);
         
         return $response->status_id;
     }
