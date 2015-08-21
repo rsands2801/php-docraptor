@@ -255,7 +255,6 @@ class ApiWrapper
      */
     public function checkStatus($status_id = false)
     {
-        $this->async = true;
 
         if(!$status_id) {
             throw new InvalidArgumentException('Status ID Required');
