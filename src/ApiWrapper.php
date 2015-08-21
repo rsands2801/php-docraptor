@@ -253,32 +253,17 @@ class ApiWrapper
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
      */
-    public function checkStatus($status_id = false)
+    public function checkStatus($status_id = null)
     {
-
         if(!$status_id) {
             throw new InvalidArgumentException('Status ID Required');
         }
 
         $uri = sprintf('%s://%s/%s', $this->url_protocol, $this->api_url_status, $status_id);
 
-        $request = $this->httpClient->doGet($uri);
+        $request = $this->httpClient->doRequest($uri);
 
-        $response = json_decode($request);
-
-        switch ($response->status) {
-                case "completed":
-                    return "completed";
-                case "failed":
-                    throw new InvalidArgumentException($response->validation_errors);
-                case "queued":
-                    return "queued";
-                case "working":
-                    return "working";
-                default:
-                    throw new UnexpectedValueException($response->status);
-        }
-
+        return json_encode($request);
     }
 
 
@@ -289,7 +274,7 @@ class ApiWrapper
      * @return bool|mixed
      * @throws InvalidArgumentException
      */
-    public function requestDocumentAsync($callback = false)
+    public function requestDocumentAsync($callback = null)
     {
         $this->async = true;
 
@@ -360,7 +345,7 @@ class ApiWrapper
             $fields['doc[document_url]'] = $this->document_url;
         }
 
-        $result = $this->httpClient->doPost($uri, $fields);
+        $result = $this->httpClient->doRequest($uri, $fields);
 
         if ($filename) {
             file_put_contents($filename, $result);
