@@ -84,26 +84,6 @@ class ApiWrapper
     {
         return $this->api_key;
     }
-    
-    /**
-     * @param boolean $async
-     * @return $this
-     */
-    public function setAsync($async)
-    {
-        $this->async = $async;
-        return $this;
-    }
-    
-    /**
-     * @param string|null $callback_url
-     * @return $this
-     */
-    public function setCallbackUrl($callback_url)
-    {
-        $this->callback_url = $callback_url;
-        return $this;
-    }
 
     /**
      * @param string|null $document_content
@@ -263,6 +243,39 @@ class ApiWrapper
 
     }
 
+
+    /**
+     * Main method that makes the actual API call
+     *
+     * @param bool|string $callback
+     * @return bool|mixed
+     * @throws MissingAPIKeyException
+     * @throws MissingContentException
+     */
+    public function requestDocumentAsync($callback = false)
+    {
+        if (!$this->api_key) {
+            throw new MissingAPIKeyException();
+        }
+
+        if (!isset($this->document_content) && !isset($this->document_url)) {
+            throw new MissingContentException();
+        }
+
+        $this->async(true);
+
+        if($callback) {
+            $this->callback_url($callback);
+        }
+
+        $request = $this->fetchDocument();
+
+        $resonse = json_decode($request);
+
+        return $response->status_id;
+    }
+
+
     /**
      * Main method that makes the actual API call
      *
@@ -294,8 +307,8 @@ class ApiWrapper
             'doc[javascript]'    => $this->javascript,
             'doc[async]'         => $this->async,
         );
-        
-        if (!empty($this->callback_url) && $this->async == true) {
+
+        if (!empty($this->callback_url)) {
             $fields['doc[callback_url]'] = $this->callback_url;
         }
         
