@@ -252,10 +252,10 @@ class ApiWrapper
      */
     public function requestDocumentAsync($callback = false)
     {
-        $this->async(true);
+        $this->async = true;
 
         if($callback) {
-            $this->callback_url($callback);
+            $this->callback_url = $callback;
         }
 
         $request = $this->fetchDocument();
