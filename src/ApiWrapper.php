@@ -245,7 +245,7 @@ class ApiWrapper
 
 
     /**
-     * Main method that makes the actual API call
+     * Helper function for making Async call
      *
      * @param bool|string $callback
      * @return string
