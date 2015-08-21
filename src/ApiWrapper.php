@@ -245,23 +245,38 @@ class ApiWrapper
 
 
     /**
-     * Helper function for making Async call
+     * Main method that makes the actual API call
      *
      * @param bool|string $callback
-     * @return string
+     * @return bool|mixed
+     * @throws MissingAPIKeyException
+     * @throws MissingContentException
      */
     public function requestDocumentAsync($callback = false)
     {
-        $this->async = true;
+        if (!$this->api_key) {
+            throw new MissingAPIKeyException();
+        }
+
+        if (!isset($this->document_content) && !isset($this->document_url)) {
+            throw new MissingContentException();
+        }
+
+        $this->async(true);
 
         if($callback) {
-            $this->callback_url = $callback;
+
+            if(filter_var($callback, FILTER_VALIDATE_URL) === false) {
+                throw new InvalidArgumentException('Callback URL is not valid');
+            }
+
+            $this->callback_url($callback);
         }
 
         $request = $this->fetchDocument();
 
-        $response = json_decode($request);
-        
+        $resonse = json_decode($request);
+
         return $response->status_id;
     }
 
