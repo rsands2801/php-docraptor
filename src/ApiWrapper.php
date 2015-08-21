@@ -254,15 +254,7 @@ class ApiWrapper
      */
     public function requestDocumentAsync($callback = false)
     {
-        if (!$this->api_key) {
-            throw new MissingAPIKeyException();
-        }
-
-        if (!isset($this->document_content) && !isset($this->document_url)) {
-            throw new MissingContentException();
-        }
-
-        $this->async(true);
+        $this->async = true;
 
         if($callback) {
 
@@ -270,12 +262,12 @@ class ApiWrapper
                 throw new InvalidArgumentException('Callback URL is not valid');
             }
 
-            $this->callback_url($callback);
+            $this->callback_url = $callback;
         }
 
         $request = $this->fetchDocument();
 
-        $resonse = json_decode($request);
+        $response = json_decode($request);
 
         return $response->status_id;
     }
